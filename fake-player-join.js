@@ -1,8 +1,8 @@
 const net = require('net');
 
 // SA-MP server information
-const serverIp = '94.23.168.153';
-const serverPort = 7771;
+const serverIp = '192.53.174.102';
+const serverPort = 28715;
 
 // Number of fake players to simulate
 const numFakePlayers = 10;
@@ -22,7 +22,7 @@ function simulatePlayerJoin(playerId) {
     console.log(`Fake player ${playerId} connected to the server`);
 
     // Send authentication as a fake player
-    serverSocket.write(`\xFF\xFF\xFF\xFFrcon_password your-rcon-password\n`);
+    serverSocket.write(`\xFF\xFF\xFF\xFFrcon_password 809ndkgl\n`);
     serverSocket.write(`\xFF\xFF\xFF\xFFrcon login "Player${playerId}"\n`);
 
     // Perform actions as the fake player
