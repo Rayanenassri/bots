@@ -1,4 +1,4 @@
-const saMp = require('samp-query');
+const net = require('net');
 
 // SA-MP server information
 const serverIp = '94.23.168.153';
@@ -15,27 +15,34 @@ for (let playerId = 1; playerId <= numFakePlayers; playerId++) {
 // Function to simulate player join
 function simulatePlayerJoin(playerId) {
   // Connect to the SA-MP server
-  const client = saMp.createClient({ host: serverIp, port: serverPort });
+  const serverSocket = net.connect(serverPort, serverIp);
 
-  // Authenticate as a fake player
-  client.authenticate(`Player${playerId}`);
-
-  // Listen for connection events
-  client.on('connected', () => {
+  // Handle server connection
+  serverSocket.on('connect', () => {
     console.log(`Fake player ${playerId} connected to the server`);
+
+    // Send authentication as a fake player
+    serverSocket.write(`\xFF\xFF\xFF\xFFrcon_password your-rcon-password\n`);
+    serverSocket.write(`\xFF\xFF\xFF\xFFrcon login "Player${playerId}"\n`);
 
     // Perform actions as the fake player
     // Example: Send a chat message
-    client.sendChat('Hello from fake player!');
+    serverSocket.write(`\xFF\xFF\xFF\xFFsay Hello from fake player!\n`);
   });
 
-  // Listen for disconnection events
-  client.on('disconnected', () => {
+  // Handle server data
+  serverSocket.on('data', (data) => {
+    // Process server responses
+    console.log(`Fake player ${playerId} received data: ${data}`);
+  });
+
+  // Handle server disconnection
+  serverSocket.on('close', () => {
     console.log(`Fake player ${playerId} disconnected from the server`);
   });
 
   // Handle errors
-  client.on('error', (error) => {
+  serverSocket.on('error', (error) => {
     console.error(`Error for fake player ${playerId}:`, error);
   });
 }
